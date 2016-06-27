@@ -29,5 +29,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     # リダイレクトしたら`users/show`＝プロフィールページがレンダリングされること
     assert_template 'users/show'
+    assert_not flash.empty?
   end
 end
