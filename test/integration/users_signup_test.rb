@@ -13,6 +13,8 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     # サインアップが失敗したとき、再度`users/new`がレンダリングされることをテスト
     assert_template 'users/new'
+    assert_select 'div#error_explanation'
+    assert_select 'div.field_with_errors'
   end
 
   test "valid signup information" do
@@ -27,5 +29,6 @@ class UsersSignupTest < ActionDispatch::IntegrationTest
     end
     # リダイレクトしたら`users/show`＝プロフィールページがレンダリングされること
     assert_template 'users/show'
+    assert_not flash.empty?
   end
 end
