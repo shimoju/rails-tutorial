@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   validates :password, presence: true, length: { minimum: 6 }
 
   # Returns the hash digest of the given string.
-  def User.digest(string)
+  def self.digest(string)
     # 環境に応じてハッシュ値の計算コストを変更する
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
                                                   BCrypt::Engine.cost
@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   end
 
   # Returns a random token.
-  def User.new_token
+  def self.new_token
     SecureRandom.urlsafe_base64
   end
 
