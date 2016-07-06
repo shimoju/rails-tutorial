@@ -20,3 +20,4 @@
 /spring/*.pid
 
 .byebug_history
+.env
