@@ -4,8 +4,7 @@ class AccountActivationsController < ApplicationController
     # ユーザーが存在し、アクティベートされておらず、トークンが正しければ
     if user && !user.activated? && user.authenticated?(:activation, params[:id])
       # アクティベート処理を実行
-      user.update_attribute(:activated,    true)
-      user.update_attribute(:activated_at, Time.zone.now)
+      user.activate
       # ログインしてリダイレクト
       log_in user
       flash[:success] = "Account activated!"
