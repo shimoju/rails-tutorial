@@ -4,11 +4,29 @@ class UsersControllerTest < ActionController::TestCase
   def setup
     @user = users(:michael)
     @other_user = users(:archer)
+    @inactive_user = users(:inactive)
   end
 
   test "should redirect index when not logged in" do
     get :index
     assert_redirected_to login_url
+  end
+
+  # アクティベートされていないユーザーはindexに含まないこと
+  test "should not include inactive user" do
+    log_in_as(@user)
+    get :index
+    index_users = assigns(:users)
+    assert index_users.include?(@user)
+    assert_not index_users.include?(@inactive_user)
+  end
+
+  # ユーザーがアクティベートされていないときは、トップページにリダイレクトすること
+  test "should redirect show when inactive user" do
+    get :show, id: @user
+    assert_response :success
+    get :show, id: @inactive_user
+    assert_redirected_to root_url
   end
 
   test "should get new" do
