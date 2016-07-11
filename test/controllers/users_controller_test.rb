@@ -17,8 +17,8 @@ class UsersControllerTest < ActionController::TestCase
     log_in_as(@user)
     get :index
     index_users = assigns(:users)
-    assert index_users.include?(@user)
-    assert_not index_users.include?(@inactive_user)
+    assert_includes(index_users, @user)
+    assert_not_includes(index_users, @inactive_user)
   end
 
   # ユーザーがアクティベートされていないときは、トップページにリダイレクトすること
