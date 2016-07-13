@@ -8,6 +8,8 @@ class MicropostsController < ApplicationController
       flash[:success] = "Micropost created!"
       redirect_to root_url
     else
+      # renderで再描画したときに@feed_items変数がなくなってしまうため、空の配列を用意する
+      @feed_items = []
       # 投稿フォームはホームページ(root)に設置する
       render 'static_pages/home'
     end
