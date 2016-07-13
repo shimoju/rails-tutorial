@@ -9,6 +9,8 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
     log_in_as(@user)
     get root_path
     assert_select 'div.pagination'
+    # 画像アップロードフォーム：<input type="file">
+    assert_select 'input[type=file]'
 
     # Invalid submission
     # 無効な投稿は受け付けず、エラーを表示すること
@@ -19,9 +21,13 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
 
     # Valid submission
     content = "This micropost really ties the room together"
+    # アップロードのテスト用メソッド fixture_file_upload()
+    picture = fixture_file_upload('test/fixtures/rails.png', 'image/png')
     assert_difference 'Micropost.count', 1 do
-      post microposts_path, micropost: { content: content }
+      post microposts_path, micropost: { content: content, picture: picture }
     end
+    # createアクションのインスタンス変数@micropostにpictureが入っていること
+    assert assigns(:micropost).picture?
     # リダイレクトしたら先ほどの投稿が追加されていること
     assert_redirected_to root_url
     follow_redirect!
