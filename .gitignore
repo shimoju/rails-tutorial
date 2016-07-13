@@ -19,5 +19,8 @@
 # Ignore Spring files.
 /spring/*.pid
 
+# Ignore upload files
+/public/uploads
+
 .byebug_history
 .env
