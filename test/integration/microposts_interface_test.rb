@@ -39,4 +39,21 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
     get user_path(users(:archer))
     assert_select 'a', text: 'delete', count: 0
   end
+
+  # サイドバーの投稿数表示のテスト
+  test "micropost sidebar count" do
+    log_in_as(@user)
+    get root_path
+    assert_match "#{@user.microposts.count} microposts", response.body
+    # User with zero microposts
+    other_user = users(:malory)
+    log_in_as(other_user)
+    get root_path
+    # 投稿数0のときは "0 microposts"
+    assert_match "0 microposts", response.body
+    other_user.microposts.create!(content: "A micropost")
+    get root_path
+    # 投稿数1のときは "1 micropost" (単数形)
+    assert_match "1 micropost", response.body
+  end
 end
