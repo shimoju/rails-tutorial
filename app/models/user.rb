@@ -1,5 +1,15 @@
 class User < ActiveRecord::Base
   has_many :microposts, dependent: :destroy
+  # 外部キーは`relationship_id`ではないので、ここでは明示的に指定する必要がある
+  has_many :active_relationships, class_name:  "Relationship",
+                                  foreign_key: "follower_id",
+                                  dependent:   :destroy
+  has_many :passive_relationships, class_name:  "Relationship",
+                                   foreign_key: "followed_id",
+                                   dependent:   :destroy
+  # `user.following.find(other_user)`などと扱えるようになる
+  has_many :following, through: :active_relationships, source: :followed
+  has_many :followers, through: :passive_relationships, source: :follower
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save :downcase_email
   before_create :create_activation_digest
@@ -75,6 +85,25 @@ class User < ActiveRecord::Base
   # See "Following users" for the full implementation.
   def feed
     Micropost.where("user_id = ?", id)
+  end
+
+  # Follows a user.
+  def follow(other_user)
+    # フォローする：followerは自分でfollowedがフォローされた人
+    active_relationships.create(followed_id: other_user.id)
+  end
+
+  # Unfollows a user.
+  def unfollow(other_user)
+    # フォローを外す：followed_idを検索して、その行を削除
+    active_relationships.find_by(followed_id: other_user.id).destroy
+  end
+
+  # Returns true if the current user is following the other user.
+  def following?(other_user)
+    # followedの中にそのユーザーが含まれているか
+    # `has_many :following, through: ...`のおかげでfollowingというメソッドで透過的に扱える
+    following.include?(other_user)
   end
 
   private
