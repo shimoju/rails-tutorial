@@ -85,7 +85,8 @@ class User < ActiveRecord::Base
   def feed
     # User#following_ids : followingのidを配列で返してくれる
     # User#id は自身のidなので、フォローしている人+自身のmicropostsが抽出される
-    Micropost.where("user_id IN (?) OR user_id = ?", following_ids, id)
+    Micropost.where("user_id IN (:following_ids) OR user_id = :user_id",
+                    following_ids: following_ids, user_id: id)
   end
 
   # Follows a user.
